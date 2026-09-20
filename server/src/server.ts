@@ -39,7 +39,7 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`
 ┌────────────────────────────────────────────────────────┐
 │   ContextSwitch — Snapshot & Reasoning Engine          │
-│   Codex Community Hackathon · TinkerSpace, Calicut    │
+│   Developer Context Recovery & Resume Assistant        │
 ├────────────────────────────────────────────────────────┤
 │   Server live:    http://localhost:${PORT}                 │
 │   Health check:   http://localhost:${PORT}/health          │

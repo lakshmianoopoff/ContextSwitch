@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Sparkles } from 'lucide-react';
 import { ActiveView, Project, PatternTheme } from './types';
-import { Sidebar } from './components/layout/Sidebar';
-import { DashboardView } from './components/dashboard/DashboardView';
-import { BriefingView } from './components/briefing/BriefingView';
-import { PatternsView } from './components/patterns/PatternsView';
-import { Toast } from './components/common/Toast';
-import { TrackRepoModal } from './components/common/TrackRepoModal';
-import { BeginnerGuideModal } from './components/common/BeginnerGuideModal';
-import { fetchLiveProjects, fetchLivePatterns, triggerLiveSnapshot, checkBackendHealth, untrackProject } from './services/api';
+import { Sidebar, TopBar } from './components/layout';
+import { DashboardView } from './components/dashboard';
+import { BriefingView } from './components/briefing';
+import { PatternsView } from './components/patterns';
+import { Toast, TrackRepoModal, BeginnerGuideModal } from './components/common';
+import {
+  fetchLiveProjects,
+  fetchLivePatterns,
+  triggerLiveSnapshot,
+  checkBackendHealth,
+  untrackProject,
+} from './services/api';
 
 export function App() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -24,7 +27,7 @@ export function App() {
   const [isTrackModalOpen, setIsTrackModalOpen] = useState(false);
   const [isTourOpen, setIsTourOpen] = useState(false);
 
-  // Auto-open interactive guide for first-time visitors / judges
+  // Auto-open interactive beginner guide for first-time visitors
   useEffect(() => {
     try {
       const seen = localStorage.getItem('contextswitch_tour_seen');
@@ -37,7 +40,7 @@ export function App() {
     }
   }, []);
 
-  // Load live data from backend (GET /projects & GET /patterns)
+  // Load live telemetry and patterns data from backend
   useEffect(() => {
     async function loadData() {
       setIsLoading(true);
@@ -91,7 +94,6 @@ export function App() {
   const handleTriggerSnapshot = async (projectId: string) => {
     const res = await triggerLiveSnapshot(projectId);
     if (res.success) {
-      // Refresh project list live from backend
       const { projects: updatedProjects } = await fetchLiveProjects();
       setProjects(updatedProjects);
       showToast(`Live snapshot captured and saved to SQLite for ${projectId}`);
@@ -148,30 +150,10 @@ export function App() {
       {/* Main Content Area */}
       <main className="flex-1 h-screen overflow-y-auto bg-warm-bg flex flex-col">
         {/* Real-time Backend Status Bar */}
-        <div className="px-8 py-2 bg-warm-panel/80 hairline-border-b flex items-center justify-between text-[11px] text-warm-muted">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5">
-              <span className={`w-2 h-2 rounded-full ${isLiveBackend ? 'bg-status-clean animate-pulse' : 'bg-status-failing'}`} />
-              <span className="font-semibold text-warm-text">
-                {isLiveBackend ? 'Backend Connected (Port 4000)' : 'Backend Disconnected (Port 4000 unreachable)'}
-              </span>
-            </div>
-            <span className="text-warm-border">|</span>
-            <span>
-              Live Snapshot Engine: <strong className="font-mono text-warm-text font-normal">http://localhost:4000</strong>
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsTourOpen(true)}
-              className="px-2.5 py-1 rounded bg-warm-bg hairline-border text-[11px] font-semibold text-accent hover:border-accent flex items-center gap-1.5 transition-all shadow-flat active:scale-95"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Beginner Guide Tour</span>
-            </button>
-            <span className="font-mono text-[10px] text-warm-muted">ContextSwitch Live Engine</span>
-          </div>
-        </div>
+        <TopBar
+          isLiveBackend={isLiveBackend}
+          onOpenTour={() => setIsTourOpen(true)}
+        />
 
         <div className="flex-1">
           {isLoading && projects.length === 0 ? (

@@ -200,34 +200,15 @@ ContextSwitch rejects generic SaaS dark modes and low-contrast AI gradients in f
 
 ```text
 ContextSwitch/
-├── .gitignore                    # Git exclusions (build, logs, caches)
-├── ContextSwitch-Frontend-PRD.md # Frontend Product Requirements Document
-├── ContextSwitch-Backend-PRD.md  # Backend Product Requirements Document
-├── ContextSwitch-Integration-PRD.md # Integration & Verification Document
-├── DEMO_SCRIPT.md                # 3-Minute Live Hackathon Pitch Script
-├── README.md                     # Root Project Documentation (You are here)
-├── package.json                  # Root scripts (dev, build, server, seed)
-├── tsconfig.json                 # TypeScript project configuration
-├── vite.config.ts                # Vite frontend bundler configuration
-│
-├── src/                          # Frontend Application (React 18 + TS)
-│   ├── App.tsx                   # Live state coordinator & routing
-│   ├── main.tsx                  # React DOM entrypoint
-│   ├── index.css                 # Custom design tokens & base styling
-│   ├── components/
-│   │   ├── layout/Sidebar.tsx    # Persistent navigation & project switcher
-│   │   ├── dashboard/DashboardView.tsx # Project card grid & health search
-│   │   ├── briefing/             # Resume Briefing Detail View
-│   │   │   ├── BriefingView.tsx  # Main briefing coordinator
-│   │   │   ├── NextStepCallout.tsx # Terracotta single action callout
-│   │   │   ├── UnresolvedPanel.tsx # Failing tests & source TODOs
-│   │   │   ├── FilesTouchedPanel.tsx # Changed files & diff stats
-│   │   │   └── SessionTimeline.tsx # Historical session log
-│   │   ├── patterns/PatternsView.tsx # Cross-project bottleneck analytics
-│   │   └── common/LoadingSkeleton.tsx # Warm ivory loading skeletons
-│   ├── services/api.ts           # Typed live fetch client (0 mock fallbacks)
-│   └── types/index.ts            # Shared TypeScript interfaces
-│
+├── docs/                         # Specifications, architecture, & pitch guides
+│   ├── specs/
+│   │   ├── frontend-prd.md       # Frontend Product Requirements Document
+│   │   ├── backend-prd.md        # Backend Product Requirements Document
+│   │   └── integration-prd.md    # Integration & Verification Document
+│   └── demo-script.md            # 3-Minute Live Demonstration Pitch Script
+├── fixtures/                     # Testbed repositories for local verification
+│   ├── billing-service/          # Canonical checkout & webhook test fixture
+│   └── demo-sandbox/             # Clean sandbox repository for live captures
 ├── server/                       # Backend Application (Node + Express + TS)
 │   ├── .env.example              # Environment variables template
 │   ├── package.json              # Backend scripts & dependencies
@@ -238,44 +219,58 @@ ContextSwitch/
 │       ├── server.ts             # Express server setup (Port 4000)
 │       ├── types.ts              # Backend data contracts
 │       ├── db/
-│       │   ├── db.ts             # SQLite connection & schema initialization
-│       │   └── seed.ts           # Historical developer pause seed fixture
+│       │   ├── database.ts       # SQLite connection & schema initialization
+│       │   └── seed.ts           # Developer pause seed fixture
 │       ├── engine/
 │       │   ├── gitCapture.ts     # simple-git diff, branch, & commit reader
 │       │   ├── testCapture.ts    # Test suite parser
-│       │   ├── todoCapture.ts    # Recursive AST/Regex source code TODO scanner
+│       │   ├── todoCapture.ts    # Source code AST/Regex TODO scanner
 │       │   └── captureEngine.ts  # Master snapshot capture orchestrator
 │       ├── reasoning/
 │       │   └── codexClient.ts    # Codex prompt engineering & structured JSON
 │       └── routes/
-│           └── snapshots.ts      # REST route handlers
-│
-├── pizza-app/                    # Live testbed with uncommitted changes & failing tests
-└── demo-repo/                    # Live testbed for real-time snapshot captures
+│           └── api.ts            # REST route handlers
+├── src/                          # Frontend Application (React 18 + TS)
+│   ├── App.tsx                   # Live state coordinator & routing
+│   ├── main.tsx                  # React DOM entrypoint
+│   ├── index.css                 # Custom design tokens & base styling
+│   ├── components/
+│   │   ├── layout/               # Persistent navigation & top bar
+│   │   ├── dashboard/            # Project card grid & health search
+│   │   ├── briefing/             # Resume Briefing Detail View
+│   │   ├── patterns/             # Cross-project bottleneck analytics
+│   │   └── common/               # Modals, toasts, code badges, status pills
+│   ├── services/api.ts           # Typed live fetch client (0 mock fallbacks)
+│   └── types/index.ts            # Shared TypeScript interfaces
+├── .gitignore                    # Git exclusions (build, logs, caches)
+├── README.md                     # Root Project Documentation (You are here)
+├── package.json                  # Root scripts (dev, build, server, seed)
+├── tsconfig.json                 # TypeScript project configuration
+└── vite.config.ts                # Vite frontend bundler configuration
 ```
 
 ---
 
-## 🎤 Hackathon Demo & Pitch Guide
+## 🎤 Presentation & Demo Guide
 
-For the live presentation in front of judges at TinkerSpace, Calicut, refer to our comprehensive script:
+For the walkthrough presentation, refer to our comprehensive script:
 
-👉 **[DEMO_SCRIPT.md](file:///c:/Users/dell/OneDrive/Desktop/ContextSwitch/DEMO_SCRIPT.md)**
+👉 **[docs/demo-script.md](file:///c:/Users/dell/OneDrive/Desktop/ContextSwitch/docs/demo-script.md)**
 
 Includes:
 - **Exact 3-Minute Presentation Flow** with time-stamped visual cues.
 - **Narrative Hook:** The real cost of multi-tasking and cognitive overload.
 - **Live Action Choreography:** From paused terminal state to the instant 15-second resume briefing.
-- **Judge Defense Cheat Sheet:** Answers to questions on privacy, token efficiency, IDE extensions, and capture overhead.
+- **Technical Defense Sheet:** Answers to questions on privacy, token efficiency, IDE extensions, and capture overhead.
 
 ---
 
 ## 📄 Documentation Index
 
-- [Frontend PRD](file:///c:/Users/dell/OneDrive/Desktop/ContextSwitch/ContextSwitch-Frontend-PRD.md)
-- [Backend PRD](file:///c:/Users/dell/OneDrive/Desktop/ContextSwitch/ContextSwitch-Backend-PRD.md)
-- [Integration PRD](file:///c:/Users/dell/OneDrive/Desktop/ContextSwitch/ContextSwitch-Integration-PRD.md)
-- [Live Hackathon Pitch Script](file:///c:/Users/dell/OneDrive/Desktop/ContextSwitch/DEMO_SCRIPT.md)
+- [Frontend PRD](file:///c:/Users/dell/OneDrive/Desktop/ContextSwitch/docs/specs/frontend-prd.md)
+- [Backend PRD](file:///c:/Users/dell/OneDrive/Desktop/ContextSwitch/docs/specs/backend-prd.md)
+- [Integration PRD](file:///c:/Users/dell/OneDrive/Desktop/ContextSwitch/docs/specs/integration-prd.md)
+- [Live Demo Script](file:///c:/Users/dell/OneDrive/Desktop/ContextSwitch/docs/demo-script.md)
 
 ---
 

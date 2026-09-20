@@ -4,23 +4,23 @@ import { Snapshot } from '../types.js';
 export function runSeed() {
   initDb();
 
-  const pizza = getProject('pizza-app');
-  if (!pizza) {
+  const billing = getProject('billing-service');
+  if (!billing) {
     upsertProject({
-      id: 'pizza-app',
-      name: 'pizza-app',
-      repoPath: './pizza-app',
-      description: 'Artisan pizza delivery ordering service with Stripe checkout integration',
+      id: 'billing-service',
+      name: 'billing-service',
+      repoPath: './fixtures/billing-service',
+      description: 'Stripe webhook and checkout orchestration engine with HMAC signature verification',
       createdAt: '2026-09-18T10:00:00Z',
     });
     insertSnapshot({
-      id: 'snap_pizza_init',
-      project: 'pizza-app',
+      id: 'snap_billing_init',
+      project: 'billing-service',
       timestamp: new Date(Date.now() - 2 * 3600 * 1000).toISOString(),
       git: {
         branch: 'feature/stripe-webhook',
         diffSummary: 'src/checkout.js (+42/-3), src/webhook.js (+15/-0)',
-        lastCommitMessage: 'wip: add checkout',
+        lastCommitMessage: 'wip: add checkout and HMAC verification',
         uncommittedFiles: ['src/checkout.js', 'src/webhook.js'],
         additions: 57,
         deletions: 3,
@@ -278,24 +278,24 @@ export function runSeed() {
     },
   ];
 
-  // 5. pizza-app (The PRD canonical demo repo)
+  // 5. billing-service (The canonical checkout demo repo)
   upsertProject({
-    id: 'pizza-app',
-    name: 'pizza-app',
-    repoPath: './pizza-app',
-    description: 'Artisan pizza delivery ordering service with Stripe checkout integration',
+    id: 'billing-service',
+    name: 'billing-service',
+    repoPath: './fixtures/billing-service',
+    description: 'Stripe webhook and checkout orchestration engine with HMAC signature verification',
     createdAt: '2026-09-18T10:00:00Z',
   });
 
-  const pizzaSnapshots: Snapshot[] = [
+  const billingSnapshots: Snapshot[] = [
     {
-      id: 'snap_pizza_3',
-      project: 'pizza-app',
+      id: 'snap_billing_3',
+      project: 'billing-service',
       timestamp: new Date(Date.now() - 2 * 3600 * 1000).toISOString(), // 2h ago
       git: {
         branch: 'feature/stripe-webhook',
         diffSummary: 'src/checkout.js (+42/-3), src/webhook.js (+15/-0)',
-        lastCommitMessage: 'wip: add checkout',
+        lastCommitMessage: 'wip: add checkout and HMAC verification',
         uncommittedFiles: ['src/checkout.js', 'src/webhook.js'],
         additions: 57,
         deletions: 3,
@@ -304,8 +304,8 @@ export function runSeed() {
       todos: [{ file: 'src/checkout.js', line: 42, text: 'fix signature validation before charging customer card' }],
     },
     {
-      id: 'snap_pizza_2',
-      project: 'pizza-app',
+      id: 'snap_billing_2',
+      project: 'billing-service',
       timestamp: new Date(Date.now() - 26 * 3600 * 1000).toISOString(),
       git: {
         branch: 'feature/stripe-webhook',
@@ -319,8 +319,8 @@ export function runSeed() {
       todos: [{ file: 'src/checkout.js', line: 42, text: 'fix signature validation' }],
     },
     {
-      id: 'snap_pizza_1',
-      project: 'pizza-app',
+      id: 'snap_billing_1',
+      project: 'billing-service',
       timestamp: new Date(Date.now() - 50 * 3600 * 1000).toISOString(),
       git: {
         branch: 'main',
@@ -337,7 +337,7 @@ export function runSeed() {
 
   // Insert all snapshots into SQLite
   const allToInsert = [
-    ...pizzaSnapshots,
+    ...billingSnapshots,
     ...paymentSnapshots,
     ...orchestratorSnapshots,
     ...mobileSnapshots,
