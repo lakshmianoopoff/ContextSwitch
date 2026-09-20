@@ -96,14 +96,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </span>
         </div>
 
-        <div className="relative">
-          <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-warm-muted/70" />
+        <div className="relative flex items-center">
+          <Search className="w-4 h-4 absolute left-2.5 text-warm-text/70 pointer-events-none z-10" />
           <input
             type="text"
             placeholder="Filter projects or branches..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full text-xs pl-8 pr-3 py-1.5 rounded bg-warm-bg border border-warm-border text-warm-text placeholder:text-warm-muted/60 focus:outline-none focus:border-warm-muted transition-colors"
+            className="w-full text-xs pl-8 pr-3 py-1.5 rounded bg-warm-bg border border-warm-border text-warm-text placeholder:text-warm-muted/70 focus:outline-none focus:border-warm-muted transition-colors relative z-0"
           />
         </div>
       </div>
@@ -158,11 +158,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )}
       </div>
 
-      {/* Bottom Footer Info */}
-      <div className="p-3.5 hairline-border-t bg-warm-panel text-[11px] text-warm-muted flex items-center justify-between">
-        <span>Codex Hackathon · Calicut</span>
-        <span className="font-mono text-[10px] text-warm-muted/70">v0.1.0-alpha</span>
-      </div>
     </aside>
   );
 };

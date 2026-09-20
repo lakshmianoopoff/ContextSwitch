@@ -15,7 +15,7 @@ import {
   getAllSnapshots,
 } from '../db/database.js';
 import { runSnapshot } from '../engine/snapshotRunner.js';
-import { generateResumeBriefing, generatePatternsInsight } from '../reasoning/codexClient.js';
+import { generateResumeBriefing, generatePatternsInsight, isOpenAIConfigured } from '../reasoning/codexClient.js';
 import { Snapshot, TrackedProject } from '../types.js';
 
 export const apiRouter = Router();
@@ -373,10 +373,16 @@ apiRouter.post('/projects', (req: Request, res: Response) => {
  * GET /health
  */
 apiRouter.get('/health', (_req: Request, res: Response) => {
+  const openAiActive = isOpenAIConfigured();
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
     engine: 'ContextSwitch Snapshot Engine v0.1.0',
     port: 4000,
+    codex: {
+      provider: openAiActive ? 'OpenAI' : 'Deterministic Grounded Engine',
+      model: openAiActive ? (process.env.OPENAI_MODEL || 'gpt-4o') : 'local-deterministic',
+      apiKeyConfigured: openAiActive,
+    },
   });
 });

@@ -5,13 +5,23 @@ const API_BASE = 'http://localhost:4000';
 export interface BackendStatus {
   connected: boolean;
   message: string;
+  codex?: {
+    provider: string;
+    model: string;
+    apiKeyConfigured: boolean;
+  };
 }
 
 export async function checkBackendHealth(): Promise<BackendStatus> {
   try {
     const res = await fetch(`${API_BASE}/health`, { method: 'GET' });
     if (res.ok) {
-      return { connected: true, message: 'Backend connected (Port 4000)' };
+      const data = await res.json();
+      return {
+        connected: true,
+        message: 'Backend connected (Port 4000)',
+        codex: data.codex,
+      };
     }
     return { connected: false, message: 'Backend unhealthy' };
   } catch {

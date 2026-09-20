@@ -1,11 +1,26 @@
 import OpenAI from 'openai';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { Snapshot, ResumeBriefing, PatternsResponse } from '../types.js';
 
-const apiKey = process.env.OPENAI_API_KEY;
-let openai: OpenAI | null = null;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
-if (apiKey && apiKey !== 'your_openai_api_key_here') {
-  openai = new OpenAI({ apiKey });
+export function isOpenAIConfigured(): boolean {
+  const apiKey = process.env.OPENAI_API_KEY?.trim();
+  return !!(apiKey && apiKey !== 'your_openai_api_key_here' && apiKey.startsWith('sk-'));
+}
+
+export function getOpenAIClient(): { client: OpenAI; model: string } | null {
+  const apiKey = process.env.OPENAI_API_KEY?.trim();
+  const model = process.env.OPENAI_MODEL?.trim() || 'gpt-4o';
+  if (apiKey && apiKey !== 'your_openai_api_key_here' && apiKey.startsWith('sk-')) {
+    return { client: new OpenAI({ apiKey }), model };
+  }
+  return null;
 }
 
 /**
@@ -13,7 +28,8 @@ if (apiKey && apiKey !== 'your_openai_api_key_here') {
  * with deterministic fallback grounded in the snapshot.
  */
 export async function generateResumeBriefing(snapshot: Snapshot): Promise<ResumeBriefing> {
-  if (openai) {
+  const ai = getOpenAIClient();
+  if (ai) {
     try {
       const prompt = `You are ContextSwitch, an expert developer context restoration engine.
 Analyze the following project snapshot captured right after a developer paused their work.
@@ -37,8 +53,8 @@ Respond strictly with valid JSON with this exact schema:
   "suggestedCommand": "exact shell command to run to resume (optional)"
 }`;
 
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+      const response = await ai.client.chat.completions.create({
+        model: ai.model,
         messages: [{ role: 'user', content: prompt }],
         response_format: { type: 'json_object' },
         temperature: 0.2,
@@ -68,7 +84,8 @@ Respond strictly with valid JSON with this exact schema:
  * with deterministic fallback grounded in snapshot history.
  */
 export async function generatePatternsInsight(snapshots: Snapshot[]): Promise<PatternsResponse> {
-  if (openai && snapshots.length > 0) {
+  const ai = getOpenAIClient();
+  if (ai && snapshots.length > 0) {
     try {
       const summaryList = snapshots.slice(0, 25).map((s) => ({
         project: s.project,
@@ -95,8 +112,8 @@ Respond strictly with valid JSON with this exact schema:
   "recommendation": "one architectural recommendation to eliminate the top bottleneck"
 }`;
 
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+      const response = await ai.client.chat.completions.create({
+        model: ai.model,
         messages: [{ role: 'user', content: prompt }],
         response_format: { type: 'json_object' },
         temperature: 0.2,

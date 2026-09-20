@@ -1,19 +1,31 @@
 import React, { useState } from 'react';
 import { Project, StatusType } from '../../types';
 import { ProjectCard } from './ProjectCard';
-import { LayoutGrid, AlertCircle, FileCode, CheckCircle2 } from 'lucide-react';
+import { LayoutGrid, AlertCircle, FileCode, CheckCircle2, Search } from 'lucide-react';
 
 interface DashboardViewProps {
   projects: Project[];
   onSelectProject: (projectId: string) => void;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
 }
 
-export const DashboardView: React.FC<DashboardViewProps> = ({ projects, onSelectProject }) => {
+export const DashboardView: React.FC<DashboardViewProps> = ({
+  projects,
+  onSelectProject,
+  searchQuery = '',
+  onSearchChange,
+}) => {
   const [filter, setFilter] = useState<'all' | StatusType>('all');
 
   const filteredProjects = projects.filter((p) => {
-    if (filter === 'all') return true;
-    return p.status === filter;
+    const matchesFilter = filter === 'all' || p.status === filter;
+    const matchesSearch =
+      !searchQuery ||
+      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.branch.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.oneLinePreview.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesFilter && matchesSearch;
   });
 
   const totalFailing = projects.filter((p) => p.status === 'failing').length;
@@ -105,9 +117,23 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ projects, onSelect
           </button>
         </div>
 
-        <span className="text-xs text-warm-muted font-mono">
-          Showing {filteredProjects.length} of {projects.length} workspaces
-        </span>
+        <div className="flex items-center gap-3">
+          {onSearchChange && (
+            <div className="relative flex items-center">
+              <Search className="w-4 h-4 absolute left-3 text-warm-text/70 pointer-events-none z-10" />
+              <input
+                type="text"
+                placeholder="Search workspaces..."
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+                className="text-xs pl-9 pr-3 py-1.5 rounded-lg bg-warm-panel hairline-border text-warm-text placeholder:text-warm-muted/70 focus:outline-none focus:border-warm-muted shadow-flat w-48 sm:w-60 transition-all relative z-0"
+              />
+            </div>
+          )}
+          <span className="text-xs text-warm-muted font-mono">
+            Showing {filteredProjects.length} of {projects.length} workspaces
+          </span>
+        </div>
       </div>
 
       {/* Grid of Project Cards */}

@@ -5,7 +5,7 @@ import { DashboardView } from './components/dashboard/DashboardView';
 import { BriefingView } from './components/briefing/BriefingView';
 import { PatternsView } from './components/patterns/PatternsView';
 import { Toast } from './components/common/Toast';
-import { fetchLiveProjects, fetchLivePatterns, triggerLiveSnapshot } from './services/api';
+import { fetchLiveProjects, fetchLivePatterns, triggerLiveSnapshot, checkBackendHealth } from './services/api';
 
 export function App() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -23,9 +23,13 @@ export function App() {
   useEffect(() => {
     async function loadData() {
       setIsLoading(true);
+
+      const health = await checkBackendHealth();
+      setIsLiveBackend(health.connected);
+
       const { projects: liveProjects, isLive } = await fetchLiveProjects();
       setProjects(liveProjects);
-      setIsLiveBackend(isLive);
+      if (isLive) setIsLiveBackend(true);
 
       const livePatternsData = await fetchLivePatterns();
       setPatterns(livePatternsData.patterns);
@@ -97,16 +101,20 @@ export function App() {
       {/* Main Content Area */}
       <main className="flex-1 h-screen overflow-y-auto bg-warm-bg flex flex-col">
         {/* Real-time Backend Status Bar */}
-        <div className="px-8 py-2 bg-warm-panel/60 hairline-border-b flex items-center justify-between text-[11px] text-warm-muted">
-          <div className="flex items-center gap-2">
-            <span className={`w-2 h-2 rounded-full ${isLiveBackend ? 'bg-status-clean' : 'bg-status-failing'}`} />
+        <div className="px-8 py-2 bg-warm-panel/80 hairline-border-b flex items-center justify-between text-[11px] text-warm-muted">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5">
+              <span className={`w-2 h-2 rounded-full ${isLiveBackend ? 'bg-status-clean animate-pulse' : 'bg-status-failing'}`} />
+              <span className="font-semibold text-warm-text">
+                {isLiveBackend ? 'Backend Connected (Port 4000)' : 'Backend Disconnected (Port 4000 unreachable)'}
+              </span>
+            </div>
+            <span className="text-warm-border">|</span>
             <span>
-              {isLiveBackend
-                ? 'Connected to Live Snapshot Engine (http://localhost:4000)'
-                : 'Backend Disconnected — http://localhost:4000 unreachable'}
+              Live Snapshot Engine: <strong className="font-mono text-warm-text font-normal">http://localhost:4000</strong>
             </span>
           </div>
-          <span className="font-mono text-[10px]">ContextSwitch Live Engine</span>
+          <span className="font-mono text-[10px] text-warm-muted">ContextSwitch Live Engine</span>
         </div>
 
         <div className="flex-1">
@@ -120,6 +128,8 @@ export function App() {
                 <DashboardView
                   projects={projects}
                   onSelectProject={handleSelectProject}
+                  searchQuery={searchQuery}
+                  onSearchChange={setSearchQuery}
                 />
               )}
 
