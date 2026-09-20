@@ -206,3 +206,6 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 * **Works with Any Local Git Repository:** You can track any repository on your computer by clicking **"+ Track Local Repo"** in the top navigation bar or sidebar and entering the folder path (or using the `.` preset for ContextSwitch itself).
 * **Zero-Config & Offline Safe:** An OpenAI API key is optional. If not configured, ContextSwitch automatically activates its local heuristic reasoning algorithm, ensuring that evaluations and live demos never crash or fail due to network drops.
 * **SQLite Persistence:** All session snapshots and tracked projects persist locally in `server/data/contextswitch.db`.
+
+---
+
