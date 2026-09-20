@@ -7,7 +7,7 @@ import { BriefingView } from './components/briefing/BriefingView';
 import { PatternsView } from './components/patterns/PatternsView';
 import { Toast } from './components/common/Toast';
 import { TrackRepoModal } from './components/common/TrackRepoModal';
-import { JudgeGuideModal } from './components/common/JudgeGuideModal';
+import { BeginnerGuideModal } from './components/common/BeginnerGuideModal';
 import { fetchLiveProjects, fetchLivePatterns, triggerLiveSnapshot, checkBackendHealth, untrackProject } from './services/api';
 
 export function App() {
@@ -167,7 +167,7 @@ export function App() {
               className="px-2.5 py-1 rounded bg-warm-bg hairline-border text-[11px] font-semibold text-accent hover:border-accent flex items-center gap-1.5 transition-all shadow-flat active:scale-95"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Judge Guide & Tour</span>
+              <span>Beginner Guide Tour</span>
             </button>
             <span className="font-mono text-[10px] text-warm-muted">ContextSwitch Live Engine</span>
           </div>
@@ -242,8 +242,8 @@ export function App() {
         onTrack={handleTrackRepo}
       />
 
-      {/* Interactive Judge Guide / Tour Modal */}
-      <JudgeGuideModal
+      {/* Interactive Beginner Guide / Tour Modal */}
+      <BeginnerGuideModal
         isOpen={isTourOpen}
         onClose={() => setIsTourOpen(false)}
         onSelectProject={handleSelectProject}

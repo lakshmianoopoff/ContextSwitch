@@ -126,8 +126,8 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-> 📖 **Built-in Interactive Judge Guide & Tour:**
-> When opening the web UI for the first time, an interactive modal automatically opens to walk judges through the architecture, telemetry capture, and testing flow. You can also re-open it at any time by clicking **"Judge Guide & Tour"** in the top navigation bar.
+> 📖 **Built-in Interactive Beginner Guide Tour:**
+> When opening the web UI for the first time, an interactive modal automatically opens to walk users through the features, telemetry capture, and testing flow. You can also re-open it at any time by clicking **"Beginner Guide Tour"** in the top navigation bar.
 
 ---
 
