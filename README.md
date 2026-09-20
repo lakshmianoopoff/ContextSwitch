@@ -132,12 +132,31 @@ During the development of ContextSwitch, OpenAI Codex and GPT-4o were utilized a
 
 ## Screenshots
 
-| View | Description |
-|---|---|
-| **Dashboard** | Overview of all tracked local projects, real-time health indicators, and filterable metrics. |
-| **Resume Briefing** | 15-second narrative summary, file diff stats, and the terracotta Suggested Next Step action. |
-| **Beginner Guide Tour** | Interactive 4-step walkthrough welcoming users and guiding them on tracking repositories. |
-| **Patterns View** | Analytics view highlighting cross-repository bottlenecks and actionable recommendations. |
+### 1. Dashboard View
+Overview of all tracked local microservices with live health status pills, active branches, last pause timestamps, failing tests, open TODO counts, and the real-time backend engine connection status.
+
+![Dashboard View](docs/assets/dashboard.png)
+
+---
+
+### 2. Resume Briefing & Suggested Next Step
+Upon selecting any project, ContextSwitch synthesizes recent Git diffs and AST TODOs into a 15-second resume briefing and prescribes the exact copyable terminal command needed to resume coding.
+
+![Resume Briefing View](docs/assets/briefing.png)
+
+---
+
+### 3. Interactive Beginner Guide Tour
+A clean, 4-step guided walkthrough modal that automatically introduces new users and judges to local repository tracking, telemetry capture, and the 1-click preset.
+
+![Beginner Guide Tour](docs/assets/beginner-tour.png)
+
+---
+
+### 4. Cross-Project Pattern Intelligence
+Aggregates recurring friction points and architectural bottlenecks across microservice repositories with actionable AI recommendations.
+
+![Patterns View](docs/assets/patterns.png)
 
 ---
 
