@@ -119,14 +119,12 @@ During the development of ContextSwitch, OpenAI Codex and GPT-4o were utilized a
 
 ## Demo
 
-### Live Demo
 
-* Run locally on your machine via: [http://localhost:5173](http://localhost:5173)
+![ContextSwitch Interactive Demo Walkthrough](docs/assets/demo-walkthrough.webp)
 
-### Demo / Pitch Video
+> 📹 **High-Definition Video File:** [`docs/assets/demo-walkthrough.mp4`](docs/assets/demo-walkthrough.mp4) (H.264, 1280x800)  
 
-* [Demo / Pitch Video Link - To be added]
-* **Presentation Script:** Refer to [`docs/demo-script.md`](file:///c:/Users/dell/OneDrive/Desktop/ContextSwitch/docs/demo-script.md) for the complete 3-minute live pitch flow with time-stamped cues.
+> 🌐 **Local Execution:** Run `npm run dev` and open [http://localhost:5173](http://localhost:5173).
 
 ---
 
