@@ -18,7 +18,7 @@ export const TrackRepoModal: React.FC<TrackRepoModalProps> = ({ isOpen, onClose,
 
   const handleQuickCurrent = () => {
     setProjectId('ContextSwitch');
-    setRepoPath('c:/Users/dell/OneDrive/Desktop/ContextSwitch');
+    setRepoPath('.');
     setError(null);
   };
 
@@ -82,7 +82,7 @@ export const TrackRepoModal: React.FC<TrackRepoModalProps> = ({ isOpen, onClose,
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-warm-text flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-accent" />
-                Quick Preset: Active Codebase
+                Quick Preset: This Repository (.)
               </span>
               <button
                 type="button"
@@ -93,7 +93,7 @@ export const TrackRepoModal: React.FC<TrackRepoModalProps> = ({ isOpen, onClose,
               </button>
             </div>
             <p className="text-[11px] text-warm-muted leading-relaxed">
-              Track the current <strong>ContextSwitch</strong> repository itself to reconstruct real in-flight commits and TypeScript diffs.
+              Track the current <strong>ContextSwitch</strong> repository itself (<code className="font-mono bg-warm-panel px-1 py-0.5 rounded">.</code>) to inspect live branches, commits, and source files.
             </p>
           </div>
 

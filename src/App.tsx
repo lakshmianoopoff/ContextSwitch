@@ -246,7 +246,6 @@ export function App() {
       <BeginnerGuideModal
         isOpen={isTourOpen}
         onClose={() => setIsTourOpen(false)}
-        onSelectProject={handleSelectProject}
         onOpenTrackModal={() => setIsTrackModalOpen(true)}
       />
     </div>

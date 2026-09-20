@@ -4,14 +4,12 @@ import { X, Sparkles, FolderGit2, ChevronRight, ChevronLeft, ArrowRight, ShieldC
 interface BeginnerGuideModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectProject: (projectId: string) => void;
   onOpenTrackModal: () => void;
 }
 
 export const BeginnerGuideModal: React.FC<BeginnerGuideModalProps> = ({
   isOpen,
   onClose,
-  onSelectProject,
   onOpenTrackModal,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -82,7 +80,7 @@ export const BeginnerGuideModal: React.FC<BeginnerGuideModalProps> = ({
             </div>
           </div>
           <div className="p-2.5 rounded-lg bg-accent-light/50 border border-accent/20 text-accent text-[11px]">
-            <strong>Works with ANY repository on your computer:</strong> You can point it to this cloned project, the included <code className="font-mono">pizza-app</code>, or any custom project folder on your machine!
+            <strong>Works with ANY Git repository:</strong> You can track this cloned project itself, or point ContextSwitch to any local repository folder on your machine!
           </div>
         </div>
       ),
@@ -170,10 +168,6 @@ export const BeginnerGuideModal: React.FC<BeginnerGuideModalProps> = ({
     onClose();
   };
 
-  const handleTryPizzaApp = () => {
-    handleComplete();
-    onSelectProject('pizza-app');
-  };
 
   const handleOpenTrack = () => {
     handleComplete();
@@ -216,10 +210,10 @@ export const BeginnerGuideModal: React.FC<BeginnerGuideModalProps> = ({
         {currentStep === 2 && (
           <div className="px-6 pb-2 flex items-center gap-2">
             <button
-              onClick={handleTryPizzaApp}
+              onClick={handleComplete}
               className="flex-1 py-2 px-3 rounded-lg bg-warm-bg border border-warm-border text-xs font-semibold text-warm-text hover:border-warm-muted transition-all flex items-center justify-center gap-1.5 shadow-flat"
             >
-              <span>Explore pizza-app</span>
+              <span>View Dashboard Repos</span>
               <ArrowRight className="w-3.5 h-3.5 text-accent" />
             </button>
             <button
