@@ -133,37 +133,17 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ## 💻 Testing with Your Own Local Repositories
 
-ContextSwitch is **not limited to pre-configured demos** — judges can point it at **any repository on their local machine**:
+ContextSwitch is **not limited to pre-configured demos** — you can point it at **any repository on your local machine**:
 
 1. Click **"+ Track Local Repo"** on the Dashboard or in the Sidebar.
 2. Choose one of two options:
-   - **Preset 1-Click Track:** Track `ContextSwitch` itself or `pizza-app` to see live git diffs, commits, and AST TODOs parsed immediately.
-   - **Custom Local Repository Path:** Enter the path to any repository on your machine (e.g., `/Users/judge/projects/my-app` or `C:\Users\judge\dev\my-app`, or relative path `.` or `../my-project`).
+   - **Preset 1-Click Track:** Track `ContextSwitch` itself (`.`) to see live git diffs, commits, and AST TODOs parsed immediately.
+   - **Custom Local Repository Path:** Enter the path to any repository on your machine (e.g., `/Users/dev/projects/my-app` or `C:\dev\my-app`, or relative path `.` or `../my-project`).
 3. Click **"Track & Run Initial Snapshot"**.
 4. The local engine immediately inspects:
    - Git branch, HEAD commit message, and uncommitted diff stats (`+N / -N`).
    - Line-by-line `// TODO:` and `// FIXME:` comments parsed directly from source files.
    - Generates an instant, prioritized **Resume Briefing** with the exact next command to run.
-
----
-
-## 🧪 Live Testbed Repositories
-
-ContextSwitch includes two pre-configured local git repositories ready for live capture demonstrations:
-
-### 1. `pizza-app/` — Realistic Developer In-Flight Pause
-- **Active Branch:** `feature/stripe-webhook`
-- **Uncommitted Files:** `checkout.js`, `webhook.js`
-- **Diff Stat:** `checkout.js (+42/-3), webhook.js (+15/-0)`
-- **Failing Test:** `webhook signature verification on chunked payload`
-- **Source Code Anchor:** Line 42 of `checkout.js`:
-  ```javascript
-  // TODO: fix signature validation before bodyParser consumes raw stream
-  ```
-
-### 2. `demo-repo/` — Clean Testbed for Real-Time Snapshots
-- Ideal for demonstrating live snapshot capture during an interview or pitch.
-- Edit any file, add a `// TODO:`, and press **"Take Snapshot"** in the UI to watch the timeline and briefing update in real-time.
 
 ---
 
@@ -173,12 +153,13 @@ The backend exposes a clean, typed REST API on port `4000`:
 
 | Method | Endpoint | Description | Sample Response |
 |---|---|---|---|
-| `GET` | `/health` | Healthcheck & server uptime | `{"status":"healthy","uptime":312}` |
-| `GET` | `/projects` | Get all tracked projects with latest status | `[{"id":"proj-1","name":"payment-service",...}]` |
-| `GET` | `/snapshots/:projectId` | Full session timeline for a project | `{"projectId":"pizza-app","timeline":[...]}` |
+| `GET` | `/health` | Healthcheck & server uptime | `{"status":"ok","port":4000}` |
+| `GET` | `/projects` | Get all tracked projects with latest status | `[{"id":"billing-service","name":"billing-service",...}]` |
+| `GET` | `/snapshots/:projectId` | Full session timeline for a project | `{"projectId":"billing-service","timeline":[...]}` |
 | `GET` | `/resume/:projectId` | Codex-generated resume briefing & next step | `{"briefing":{"summary":"...","nextStep":"..."}}` |
 | `GET` | `/patterns` | Cross-project bottleneck themes & insights | `{"topPatterns":[...],"insight":"..."}` |
 | `POST` | `/snapshot/:projectId` | Trigger instant git/test/TODO capture | `{"success":true,"snapshot":{...}}` |
+| `DELETE` | `/projects/:projectId` | Untrack a project and delete snapshots | `{"success":true}` |
 
 ---
 
@@ -200,15 +181,8 @@ ContextSwitch rejects generic SaaS dark modes and low-contrast AI gradients in f
 
 ```text
 ContextSwitch/
-├── docs/                         # Specifications, architecture, & pitch guides
-│   ├── specs/
-│   │   ├── frontend-prd.md       # Frontend Product Requirements Document
-│   │   ├── backend-prd.md        # Backend Product Requirements Document
-│   │   └── integration-prd.md    # Integration & Verification Document
-│   └── demo-script.md            # 3-Minute Live Demonstration Pitch Script
-├── fixtures/                     # Testbed repositories for local verification
-│   ├── billing-service/          # Canonical checkout & webhook test fixture
-│   └── demo-sandbox/             # Clean sandbox repository for live captures
+├── docs/                         # Project documentation
+│   └── demo-script.md            # Walkthrough and demonstration pitch script
 ├── server/                       # Backend Application (Node + Express + TS)
 │   ├── .env.example              # Environment variables template
 │   ├── package.json              # Backend scripts & dependencies
@@ -218,31 +192,23 @@ ContextSwitch/
 │   └── src/
 │       ├── server.ts             # Express server setup (Port 4000)
 │       ├── types.ts              # Backend data contracts
-│       ├── db/
-│       │   ├── database.ts       # SQLite connection & schema initialization
-│       │   └── seed.ts           # Developer pause seed fixture
-│       ├── engine/
-│       │   ├── gitCapture.ts     # simple-git diff, branch, & commit reader
-│       │   ├── testCapture.ts    # Test suite parser
-│       │   ├── todoCapture.ts    # Source code AST/Regex TODO scanner
-│       │   └── captureEngine.ts  # Master snapshot capture orchestrator
-│       ├── reasoning/
-│       │   └── codexClient.ts    # Codex prompt engineering & structured JSON
-│       └── routes/
-│           └── api.ts            # REST route handlers
+│       ├── db/                   # SQLite connection & database initialization
+│       ├── engine/               # Git telemetry, test parser, & AST TODO scanner
+│       ├── reasoning/            # OpenAI Codex / GPT-4o reasoning
+│       └── routes/               # Typed REST API route handlers
 ├── src/                          # Frontend Application (React 18 + TS)
 │   ├── App.tsx                   # Live state coordinator & routing
 │   ├── main.tsx                  # React DOM entrypoint
 │   ├── index.css                 # Custom design tokens & base styling
-│   ├── components/
-│   │   ├── layout/               # Persistent navigation & top bar
-│   │   ├── dashboard/            # Project card grid & health search
-│   │   ├── briefing/             # Resume Briefing Detail View
+│   ├── components/               # Modular UI architecture
+│   │   ├── layout/               # Sidebar & TopBar components
+│   │   ├── dashboard/            # Project cards & search filters
+│   │   ├── briefing/             # Resume Briefing & Next Step callouts
 │   │   ├── patterns/             # Cross-project bottleneck analytics
-│   │   └── common/               # Modals, toasts, code badges, status pills
-│   ├── services/api.ts           # Typed live fetch client (0 mock fallbacks)
-│   └── types/index.ts            # Shared TypeScript interfaces
-├── .gitignore                    # Git exclusions (build, logs, caches)
+│   │   └── common/               # Modals, toasts, badges, skeletons
+│   ├── services/                 # Typed REST client
+│   └── types/                    # Shared TypeScript interfaces
+├── .gitignore                    # Git exclusions
 ├── README.md                     # Root Project Documentation (You are here)
 ├── package.json                  # Root scripts (dev, build, server, seed)
 ├── tsconfig.json                 # TypeScript project configuration
@@ -253,7 +219,7 @@ ContextSwitch/
 
 ## 🎤 Presentation & Demo Guide
 
-For the walkthrough presentation, refer to our comprehensive script:
+For the presentation and live demonstration walkthrough, refer to:
 
 👉 **[docs/demo-script.md](file:///c:/Users/dell/OneDrive/Desktop/ContextSwitch/docs/demo-script.md)**
 
@@ -265,17 +231,7 @@ Includes:
 
 ---
 
-## 📄 Documentation Index
+## 👥 Acknowledgments
 
-- [Frontend PRD](file:///c:/Users/dell/OneDrive/Desktop/ContextSwitch/docs/specs/frontend-prd.md)
-- [Backend PRD](file:///c:/Users/dell/OneDrive/Desktop/ContextSwitch/docs/specs/backend-prd.md)
-- [Integration PRD](file:///c:/Users/dell/OneDrive/Desktop/ContextSwitch/docs/specs/integration-prd.md)
-- [Live Demo Script](file:///c:/Users/dell/OneDrive/Desktop/ContextSwitch/docs/demo-script.md)
+Built with **OpenAI Codex Reasoning**, **React 18**, **Node Express**, **SQLite**, and **Antigravity**.
 
----
-
-## 👥 Authors & Acknowledgments
-
-- **Event:** OpenAI Codex Community Hackathon, TinkerSpace, Calicut
-- **Track:** Next-Gen Productivity & Automation
-- Built with **OpenAI Codex Reasoning**, **React 18**, **Express**, **SQLite**, and **Antigravity**.

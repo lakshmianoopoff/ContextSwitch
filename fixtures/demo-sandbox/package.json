@@ -1,9 +1,0 @@
-{
-  "name": "demo-repo",
-  "version": "1.0.0",
-  "description": "Sample repository for live ContextSwitch snapshot capture testing",
-  "main": "src/checkout.js",
-  "scripts": {
-    "test": "node --test tests/webhook.test.js"
-  }
-}

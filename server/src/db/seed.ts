@@ -9,7 +9,7 @@ export function runSeed() {
     upsertProject({
       id: 'billing-service',
       name: 'billing-service',
-      repoPath: './fixtures/billing-service',
+      repoPath: './repos/billing-service',
       description: 'Stripe webhook and checkout orchestration engine with HMAC signature verification',
       createdAt: '2026-09-18T10:00:00Z',
     });
@@ -282,7 +282,7 @@ export function runSeed() {
   upsertProject({
     id: 'billing-service',
     name: 'billing-service',
-    repoPath: './fixtures/billing-service',
+    repoPath: './repos/billing-service',
     description: 'Stripe webhook and checkout orchestration engine with HMAC signature verification',
     createdAt: '2026-09-18T10:00:00Z',
   });
