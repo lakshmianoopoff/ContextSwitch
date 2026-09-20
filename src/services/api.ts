@@ -80,12 +80,16 @@ export async function fetchLivePatterns(): Promise<LivePatternsData> {
   return { patterns: [], insight: '', recommendation: '' };
 }
 
-export async function triggerLiveSnapshot(projectId: string, repoPath?: string): Promise<{ success: boolean; data?: any; error?: string }> {
+export async function triggerLiveSnapshot(
+  projectId: string,
+  repoPath?: string,
+  runLiveTests?: boolean
+): Promise<{ success: boolean; data?: any; error?: string }> {
   try {
     const res = await fetch(`${API_BASE}/snapshot/${projectId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ repoPath }),
+      body: JSON.stringify({ repoPath, runLiveTests }),
     });
     if (res.ok) {
       const data = await res.json();
@@ -131,4 +135,14 @@ export async function fetchProjectTimeline(projectId: string): Promise<any[]> {
     console.error(`Failed to fetch /snapshots/${projectId} from backend:`, error);
   }
   return [];
+}
+
+export async function untrackProject(projectId: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_BASE}/projects/${projectId}`, { method: 'DELETE' });
+    return res.ok;
+  } catch (error) {
+    console.error(`Failed to untrack ${projectId}:`, error);
+    return false;
+  }
 }

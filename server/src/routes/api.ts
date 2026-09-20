@@ -13,6 +13,7 @@ import {
   getLatestSnapshot,
   getSnapshotHistory,
   getAllSnapshots,
+  deleteProject,
 } from '../db/database.js';
 import { runSnapshot } from '../engine/snapshotRunner.js';
 import { generateResumeBriefing, generatePatternsInsight, isOpenAIConfigured } from '../reasoning/codexClient.js';
@@ -366,6 +367,20 @@ apiRouter.post('/projects', (req: Request, res: Response) => {
     res.status(201).json(project);
   } catch (error: any) {
     res.status(500).json({ error: error.message || 'Failed to register project' });
+  }
+});
+
+/**
+ * DELETE /projects/:projectId
+ * Untrack project and delete its snapshots
+ */
+apiRouter.delete('/projects/:projectId', (req: Request, res: Response) => {
+  try {
+    const { projectId } = req.params;
+    deleteProject(projectId);
+    res.json({ success: true, message: `Project ${projectId} untracked.` });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message || 'Failed to untrack project' });
   }
 });
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, ArrowUpRight, AlertCircle, FileCode, CheckCircle2 } from 'lucide-react';
+import { Clock, ArrowUpRight, AlertCircle, FileCode, CheckCircle2, Trash2 } from 'lucide-react';
 import { Project } from '../../types';
 import { StatusPill } from '../common/StatusPill';
 import { CodeBadge } from '../common/CodeBadge';
@@ -7,9 +7,10 @@ import { CodeBadge } from '../common/CodeBadge';
 interface ProjectCardProps {
   project: Project;
   onSelect: (projectId: string) => void;
+  onUntrack?: (projectId: string) => void;
 }
 
-export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect }) => {
+export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect, onUntrack }) => {
   return (
     <div
       onClick={() => onSelect(project.id)}
@@ -27,8 +28,23 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect }) =
               {project.description}
             </p>
           </div>
-          <div className="shrink-0">
+          <div className="shrink-0 flex items-center gap-1.5">
             <StatusPill status={project.status} size="sm" />
+            {onUntrack && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (window.confirm(`Untrack "${project.name}" from ContextSwitch?`)) {
+                    onUntrack(project.id);
+                  }
+                }}
+                title={`Untrack ${project.name}`}
+                className="opacity-0 group-hover:opacity-60 hover:!opacity-100 p-1 text-warm-muted hover:text-status-failing transition-all rounded hover:bg-warm-bg"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         </div>
 

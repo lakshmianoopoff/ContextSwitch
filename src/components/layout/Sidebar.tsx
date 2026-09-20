@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, TrendingUp, FolderGit2, Search, ArrowRight, Layers } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, FolderGit2, Search, ArrowRight, Layers, Plus } from 'lucide-react';
 import { Project, ActiveView } from '../../types';
 import { StatusPill } from '../common/StatusPill';
 
@@ -10,6 +10,7 @@ interface SidebarProps {
   onNavigate: (view: ActiveView, projectId?: string) => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  onOpenTrackModal?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -19,6 +20,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onNavigate,
   searchQuery,
   onSearchChange,
+  onOpenTrackModal,
 }) => {
   const filteredProjects = projects.filter((p) =>
     p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -91,9 +93,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
               Tracked Projects
             </span>
           </div>
-          <span className="text-[11px] font-mono text-warm-muted">
-            {filteredProjects.length}
-          </span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[11px] font-mono text-warm-muted">
+              {filteredProjects.length}
+            </span>
+            {onOpenTrackModal && (
+              <button
+                type="button"
+                onClick={onOpenTrackModal}
+                title="Track real local repository"
+                className="w-5 h-5 rounded flex items-center justify-center text-accent hover:bg-accent-light transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="relative flex items-center">

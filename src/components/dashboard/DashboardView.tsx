@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Project, StatusType } from '../../types';
 import { ProjectCard } from './ProjectCard';
-import { LayoutGrid, AlertCircle, FileCode, CheckCircle2, Search } from 'lucide-react';
+import { LayoutGrid, AlertCircle, FileCode, CheckCircle2, Search, Plus } from 'lucide-react';
 
 interface DashboardViewProps {
   projects: Project[];
   onSelectProject: (projectId: string) => void;
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
+  onOpenTrackModal?: () => void;
+  onUntrackProject?: (projectId: string) => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -15,6 +17,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onSelectProject,
   searchQuery = '',
   onSearchChange,
+  onOpenTrackModal,
+  onUntrackProject,
 }) => {
   const [filter, setFilter] = useState<'all' | StatusType>('all');
 
@@ -51,20 +55,32 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </p>
         </div>
 
-        {/* Quick KPI Overview */}
-        <div className="flex items-center gap-2.5 shrink-0">
-          <div className="bg-warm-panel hairline-border px-3.5 py-2 rounded-lg text-center shadow-flat">
-            <span className="block text-xl font-bold font-mono text-warm-text">{projects.length}</span>
-            <span className="text-[11px] text-warm-muted font-medium">Tracked Repos</span>
+        {/* Quick KPI Overview & Track Button */}
+        <div className="flex items-center gap-3 shrink-0 flex-wrap">
+          <div className="flex items-center gap-2">
+            <div className="bg-warm-panel hairline-border px-3.5 py-2 rounded-lg text-center shadow-flat">
+              <span className="block text-xl font-bold font-mono text-warm-text">{projects.length}</span>
+              <span className="text-[11px] text-warm-muted font-medium">Tracked Repos</span>
+            </div>
+            <div className="bg-warm-panel hairline-border px-3.5 py-2 rounded-lg text-center shadow-flat">
+              <span className="block text-xl font-bold font-mono text-status-failing">{totalFailing}</span>
+              <span className="text-[11px] text-warm-muted font-medium">Failing Tests</span>
+            </div>
+            <div className="bg-warm-panel hairline-border px-3.5 py-2 rounded-lg text-center shadow-flat">
+              <span className="block text-xl font-bold font-mono text-status-warning">{totalWarning}</span>
+              <span className="text-[11px] text-warm-muted font-medium">Open TODOs</span>
+            </div>
           </div>
-          <div className="bg-warm-panel hairline-border px-3.5 py-2 rounded-lg text-center shadow-flat">
-            <span className="block text-xl font-bold font-mono text-status-failing">{totalFailing}</span>
-            <span className="text-[11px] text-warm-muted font-medium">Failing Tests</span>
-          </div>
-          <div className="bg-warm-panel hairline-border px-3.5 py-2 rounded-lg text-center shadow-flat">
-            <span className="block text-xl font-bold font-mono text-status-warning">{totalWarning}</span>
-            <span className="text-[11px] text-warm-muted font-medium">Open TODOs</span>
-          </div>
+
+          {onOpenTrackModal && (
+            <button
+              onClick={onOpenTrackModal}
+              className="px-4 py-2.5 text-xs font-semibold bg-accent text-white rounded-lg shadow-flat hover:bg-accent/90 transition-all flex items-center gap-1.5 shrink-0 active:scale-95"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Track Local Repo</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -163,6 +179,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               key={project.id}
               project={project}
               onSelect={onSelectProject}
+              onUntrack={onUntrackProject}
             />
           ))}
         </div>

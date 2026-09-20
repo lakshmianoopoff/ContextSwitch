@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
+import { Sparkles } from 'lucide-react';
 import { ActiveView, Project, PatternTheme } from './types';
 import { Sidebar } from './components/layout/Sidebar';
 import { DashboardView } from './components/dashboard/DashboardView';
 import { BriefingView } from './components/briefing/BriefingView';
 import { PatternsView } from './components/patterns/PatternsView';
 import { Toast } from './components/common/Toast';
-import { fetchLiveProjects, fetchLivePatterns, triggerLiveSnapshot, checkBackendHealth } from './services/api';
+import { TrackRepoModal } from './components/common/TrackRepoModal';
+import { JudgeGuideModal } from './components/common/JudgeGuideModal';
+import { fetchLiveProjects, fetchLivePatterns, triggerLiveSnapshot, checkBackendHealth, untrackProject } from './services/api';
 
 export function App() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -18,6 +21,21 @@ export function App() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isLiveBackend, setIsLiveBackend] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isTrackModalOpen, setIsTrackModalOpen] = useState(false);
+  const [isTourOpen, setIsTourOpen] = useState(false);
+
+  // Auto-open interactive guide for first-time visitors / judges
+  useEffect(() => {
+    try {
+      const seen = localStorage.getItem('contextswitch_tour_seen');
+      if (!seen) {
+        const timer = setTimeout(() => setIsTourOpen(true), 600);
+        return () => clearTimeout(timer);
+      }
+    } catch {
+      // Ignore localStorage errors
+    }
+  }, []);
 
   // Load live data from backend (GET /projects & GET /patterns)
   useEffect(() => {
@@ -82,6 +100,34 @@ export function App() {
     }
   };
 
+  const handleTrackRepo = async (projectId: string, repoPath: string, runLiveTests: boolean) => {
+    const res = await triggerLiveSnapshot(projectId, repoPath, runLiveTests);
+    if (res.success) {
+      const { projects: updatedProjects } = await fetchLiveProjects();
+      setProjects(updatedProjects);
+      setActiveProjectId(projectId);
+      setActiveView('briefing');
+      showToast(`Scanned and tracked live repository: ${projectId}`);
+      return { success: true };
+    }
+    return { success: false, error: res.error || 'Failed to scan repository' };
+  };
+
+  const handleUntrackProject = async (projectId: string) => {
+    const ok = await untrackProject(projectId);
+    if (ok) {
+      const { projects: updatedProjects } = await fetchLiveProjects();
+      setProjects(updatedProjects);
+      if (activeProjectId === projectId) {
+        setActiveProjectId(null);
+        setActiveView('dashboard');
+      }
+      showToast(`Untracked ${projectId}`);
+    } else {
+      showToast(`Failed to untrack ${projectId}`);
+    }
+  };
+
   const showToast = (message: string) => {
     setToastMessage(message);
   };
@@ -96,6 +142,7 @@ export function App() {
         onNavigate={handleNavigate}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        onOpenTrackModal={() => setIsTrackModalOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -114,7 +161,16 @@ export function App() {
               Live Snapshot Engine: <strong className="font-mono text-warm-text font-normal">http://localhost:4000</strong>
             </span>
           </div>
-          <span className="font-mono text-[10px] text-warm-muted">ContextSwitch Live Engine</span>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsTourOpen(true)}
+              className="px-2.5 py-1 rounded bg-warm-bg hairline-border text-[11px] font-semibold text-accent hover:border-accent flex items-center gap-1.5 transition-all shadow-flat active:scale-95"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Judge Guide & Tour</span>
+            </button>
+            <span className="font-mono text-[10px] text-warm-muted">ContextSwitch Live Engine</span>
+          </div>
         </div>
 
         <div className="flex-1">
@@ -130,6 +186,8 @@ export function App() {
                   onSelectProject={handleSelectProject}
                   searchQuery={searchQuery}
                   onSearchChange={setSearchQuery}
+                  onOpenTrackModal={() => setIsTrackModalOpen(true)}
+                  onUntrackProject={handleUntrackProject}
                 />
               )}
 
@@ -176,6 +234,21 @@ export function App() {
       {toastMessage && (
         <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
       )}
+
+      {/* Track Real Local Repository Modal */}
+      <TrackRepoModal
+        isOpen={isTrackModalOpen}
+        onClose={() => setIsTrackModalOpen(false)}
+        onTrack={handleTrackRepo}
+      />
+
+      {/* Interactive Judge Guide / Tour Modal */}
+      <JudgeGuideModal
+        isOpen={isTourOpen}
+        onClose={() => setIsTourOpen(false)}
+        onSelectProject={handleSelectProject}
+        onOpenTrackModal={() => setIsTrackModalOpen(true)}
+      />
     </div>
   );
 }

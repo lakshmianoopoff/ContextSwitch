@@ -70,6 +70,11 @@ export function getProject(id: string): TrackedProject | undefined {
   return stmt.get(id) as TrackedProject | undefined;
 }
 
+export function deleteProject(id: string): void {
+  db.prepare('DELETE FROM snapshots WHERE project_id = ?').run(id);
+  db.prepare('DELETE FROM projects WHERE id = ?').run(id);
+}
+
 // Snapshots queries
 export function insertSnapshot(snapshot: Snapshot): Snapshot {
   const id = snapshot.id || `snap_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;

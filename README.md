@@ -126,6 +126,25 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.
 
+> 📖 **Built-in Interactive Judge Guide & Tour:**
+> When opening the web UI for the first time, an interactive modal automatically opens to walk judges through the architecture, telemetry capture, and testing flow. You can also re-open it at any time by clicking **"Judge Guide & Tour"** in the top navigation bar.
+
+---
+
+## 💻 Testing with Your Own Local Repositories
+
+ContextSwitch is **not limited to pre-configured demos** — judges can point it at **any repository on their local machine**:
+
+1. Click **"+ Track Local Repo"** on the Dashboard or in the Sidebar.
+2. Choose one of two options:
+   - **Preset 1-Click Track:** Track `ContextSwitch` itself or `pizza-app` to see live git diffs, commits, and AST TODOs parsed immediately.
+   - **Custom Local Repository Path:** Enter the path to any repository on your machine (e.g., `/Users/judge/projects/my-app` or `C:\Users\judge\dev\my-app`, or relative path `.` or `../my-project`).
+3. Click **"Track & Run Initial Snapshot"**.
+4. The local engine immediately inspects:
+   - Git branch, HEAD commit message, and uncommitted diff stats (`+N / -N`).
+   - Line-by-line `// TODO:` and `// FIXME:` comments parsed directly from source files.
+   - Generates an instant, prioritized **Resume Briefing** with the exact next command to run.
+
 ---
 
 ## 🧪 Live Testbed Repositories
