@@ -2,8 +2,10 @@ services:
   - type: web
     name: contextswitch-api
     runtime: node
-    # Persistent disks require a paid Render web-service plan.
-    plan: 0.5c-512mb
+    # Free services have ephemeral storage; SQLite data is reset on a restart
+    # or redeploy. Upgrade to a paid plan and restore the disk configuration
+    # when durable persistence is required.
+    plan: free
     rootDir: server
     buildCommand: npm ci && npm run build
     startCommand: npm start
@@ -11,8 +13,6 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 22
-      - key: DATABASE_PATH
-        value: /var/data/contextswitch.db
       # Set after Vercel assigns the production frontend URL.
       - key: CORS_ORIGINS
         sync: false
@@ -21,7 +21,3 @@ services:
         sync: false
       - key: OPENAI_MODEL
         value: gpt-4o
-    disk:
-      name: contextswitch-data
-      mountPath: /var/data
-      sizeGB: 1

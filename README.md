@@ -219,9 +219,10 @@ The repository includes [`render.yaml`](./render.yaml) for Render and
 1. In Render, create a **Blueprint** from this repository. It reads
    `render.yaml`, uses `server/` as the root directory, runs `npm ci && npm run build`,
    and starts the compiled API with `npm start` (`node dist/server.js`).
-2. The configured `/var/data` disk persists
-   `/var/data/contextswitch.db` over restarts and redeploys. Persistent disks
-   require a paid Render web-service plan; the Blueprint selects `0.5c-512mb`.
+2. The default Blueprint uses Render's free plan. Its SQLite file is ephemeral,
+   so data resets on a Render restart or redeploy. To retain SQLite data, change
+   to a paid plan and attach a persistent disk at `/var/data` with
+   `DATABASE_PATH=/var/data/contextswitch.db`.
 3. Set `CORS_ORIGINS` in Render to your Vercel production origin, for example
    `https://contextswitch.vercel.app`. Add `http://localhost:5173` too if you
    want the same service available to local development.
