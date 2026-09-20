@@ -160,6 +160,17 @@ Aggregates recurring friction points and architectural bottlenecks across micros
 
 ---
 
+### 5. Track Real Local Repository
+Allows developers and evaluators to point ContextSwitch at **any active Git repository on their local machine** without needing cloud setup or simulated mocks.
+
+* **1-Click Active Codebase Preset (`.`):** Click "Use Preset" to automatically track the current repository (`ContextSwitch` itself), instantly parsing live uncommitted diffs, active branches, and recent commits.
+* **Custom Local Path Input:** Accepts any relative or absolute folder path across Windows, macOS, and Linux (e.g. `.` or `../my-project` or `/Users/dev/code/api`).
+* **Instant Snapshot & Source AST Scan:** Directly invokes local `simple-git`, detects uncommitted additions/deletions, extracts line-specific `// TODO:` and `// FIXME:` source anchors, and generates a fresh AI resume briefing in under 2 seconds.
+
+![Track Real Local Repository](docs/assets/track-local-repo.png)
+
+---
+
 ## How to Run Locally
 
 ```bash
