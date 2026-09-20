@@ -1,6 +1,9 @@
 import { Project, PatternTheme } from '../types';
 
-const API_BASE = 'http://localhost:4000';
+// Vite embeds VITE_* values at build time. Vercel supplies the production API
+// URL through VITE_API_BASE_URL; local development keeps the localhost default.
+export const API_BASE = (import.meta.env.VITE_API_BASE_URL?.trim() || 'http://localhost:4000')
+  .replace(/\/+$/, '');
 
 export interface BackendStatus {
   connected: boolean;
@@ -19,7 +22,7 @@ export async function checkBackendHealth(): Promise<BackendStatus> {
       const data = await res.json();
       return {
         connected: true,
-        message: 'Backend connected (Port 4000)',
+        message: `Backend connected (${API_BASE})`,
         codex: data.codex,
       };
     }

@@ -209,3 +209,58 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
 
+## Deploy: Render API + Vercel frontend
+
+The repository includes [`render.yaml`](./render.yaml) for Render and
+[`vercel.json`](./vercel.json) for Vercel. Vite builds the frontend into `dist/`.
+
+### Render backend
+
+1. In Render, create a **Blueprint** from this repository. It reads
+   `render.yaml`, uses `server/` as the root directory, runs `npm ci && npm run build`,
+   and starts the compiled API with `npm start` (`node dist/server.js`).
+2. The configured `/var/data` disk persists
+   `/var/data/contextswitch.db` over restarts and redeploys. Persistent disks
+   require a paid Render web-service plan; the Blueprint selects `0.5c-512mb`.
+3. Set `CORS_ORIGINS` in Render to your Vercel production origin, for example
+   `https://contextswitch.vercel.app`. Add `http://localhost:5173` too if you
+   want the same service available to local development.
+4. Optionally set `OPENAI_API_KEY` only in Render's Environment page. Never
+   commit it. With no key, an invalid key, or a failed OpenAI request, ContextSwitch
+   automatically uses deterministic local reasoning.
+
+### Vercel frontend
+
+1. Import the repository with the repository root as Vercel's Root Directory.
+   `vercel.json` runs `npm run build` and publishes `dist`.
+2. In **Project Settings → Environment Variables**, create this Production value:
+
+   ```text
+   VITE_API_BASE_URL=https://<your-render-service>.onrender.com
+   ```
+
+   Do not add a trailing slash. Redeploy after changing it because Vite embeds
+   `VITE_*` values at build time.
+3. Copy the resulting Vercel URL back to Render as `CORS_ORIGINS`.
+
+### Verify after deployment
+
+```bash
+curl https://<your-render-service>.onrender.com/projects
+curl -X POST https://<your-render-service>.onrender.com/snapshot/billing-service
+curl https://<your-render-service>.onrender.com/resume/billing-service
+curl https://<your-render-service>.onrender.com/patterns
+```
+
+For persistence, make the snapshot request and note its ID, trigger a Render
+redeploy, then confirm the ID still appears in the project's timeline or that
+`/resume/billing-service` returns the post-redeploy latest snapshot.
+
+### Hosted-demo limitation
+
+The hosted demo runs the full ContextSwitch experience against pre-tracked
+sample/demo repositories. **+ Track Local Repo** reads from the filesystem of
+the machine running the backend, not a visitor's machine. To track a repository
+on your computer, run ContextSwitch locally with `npm run server` and `npm run dev`.
+
+---

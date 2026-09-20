@@ -40,7 +40,8 @@ function getRelativeTime(dateStr: string): string {
 function formatProjectForFrontend(
   project: TrackedProject,
   latestSnap: Snapshot | null,
-  history: Snapshot[]
+  history: Snapshot[],
+  apiBaseUrl = ''
 ) {
   if (!latestSnap) {
     return {
@@ -56,7 +57,7 @@ function formatProjectForFrontend(
       suggestedNextStep: {
         title: 'Run initial project snapshot',
         instruction: 'Trigger a snapshot to capture current working tree, tests, and TODOs.',
-        command: `curl -X POST http://localhost:4000/snapshot/${project.id}`,
+        command: `curl -X POST ${apiBaseUrl}/snapshot/${project.id}`,
       },
       stats: { totalFiles: 0, additions: 0, deletions: 0, failingTestsCount: 0, todosCount: 0 },
       unresolved: [],
@@ -185,13 +186,14 @@ function formatProjectForFrontend(
  * GET /projects
  * Returns latest snapshot for every tracked project (Dashboard view)
  */
-apiRouter.get('/projects', async (_req: Request, res: Response) => {
+apiRouter.get('/projects', async (req: Request, res: Response) => {
   try {
     const projects = getAllProjects();
     const formatted = projects.map((p) => {
       const latest = getLatestSnapshot(p.id);
       const history = getSnapshotHistory(p.id, 5);
-      return formatProjectForFrontend(p, latest, history);
+      const apiBaseUrl = `${req.protocol}://${req.get('host')}`;
+      return formatProjectForFrontend(p, latest, history, apiBaseUrl);
     });
 
     res.json(formatted);
@@ -393,7 +395,7 @@ apiRouter.get('/health', (_req: Request, res: Response) => {
     status: 'ok',
     timestamp: new Date().toISOString(),
     engine: 'ContextSwitch Snapshot Engine v0.1.0',
-    port: 4000,
+    port: Number.parseInt(process.env.PORT || '4000', 10),
     codex: {
       provider: openAiActive ? 'OpenAI' : 'Deterministic Grounded Engine',
       model: openAiActive ? (process.env.OPENAI_MODEL || 'gpt-4o') : 'local-deterministic',

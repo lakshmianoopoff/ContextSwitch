@@ -15,11 +15,26 @@ dotenv.config({ path: path.resolve(__dirname, '../.env') });
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const app = express();
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
+app.set('trust proxy', 1);
+const parsedPort = Number.parseInt(process.env.PORT || '', 10);
+const PORT = Number.isFinite(parsedPort) ? parsedPort : 4000;
 
-// Enable CORS for Vite frontend (http://localhost:5173) and any local dev origin
+const localOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+const allowedOrigins = (process.env.CORS_ORIGINS || localOrigins.join(','))
+  .split(',')
+  .map((origin) => origin.trim().replace(/\/$/, ''))
+  .filter(Boolean);
+
+// Use CORS_ORIGINS for the Vercel production URL (or a comma-separated list).
 app.use(cors({
-  origin: '*',
+  origin(origin, callback) {
+    // Health checks and curl calls do not include a browser Origin header.
+    if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ''))) {
+      callback(null, true);
+      return;
+    }
+    callback(new Error(`Origin ${origin} is not allowed by CORS`));
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
@@ -41,10 +56,10 @@ app.listen(PORT, '0.0.0.0', () => {
 │   ContextSwitch — Snapshot & Reasoning Engine          │
 │   Developer Context Recovery & Resume Assistant        │
 ├────────────────────────────────────────────────────────┤
-│   Server live:    http://localhost:${PORT}                 │
-│   Health check:   http://localhost:${PORT}/health          │
-│   Projects API:   http://localhost:${PORT}/projects        │
-│   Patterns API:   http://localhost:${PORT}/patterns        │
+│   Server port:    ${PORT}                                  │
+│   Health check:   /health                                  │
+│   Projects API:   /projects                                │
+│   Patterns API:   /patterns                                │
 └────────────────────────────────────────────────────────┘
   `);
 });

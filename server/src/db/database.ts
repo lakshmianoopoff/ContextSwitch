@@ -1,4 +1,5 @@
 import Database from 'better-sqlite3';
+import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -7,12 +8,20 @@ import { Snapshot, TrackedProject } from '../types.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const dataDir = path.resolve(__dirname, '../../data');
+// database.ts loads before server.ts executes, so load local env files here
+// before reading DATABASE_PATH.
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
+
+// Local development keeps using server/data/contextswitch.db. Render sets an
+// absolute path on its persistent disk through DATABASE_PATH.
+const defaultDbPath = path.resolve(__dirname, '../../data/contextswitch.db');
+const dbPath = process.env.DATABASE_PATH?.trim() || defaultDbPath;
+const dataDir = path.dirname(dbPath);
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
 
-const dbPath = path.join(dataDir, 'contextswitch.db');
 export const db = new Database(dbPath);
 
 // Enable WAL mode for high performance

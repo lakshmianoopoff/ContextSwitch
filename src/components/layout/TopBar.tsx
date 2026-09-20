@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sparkles } from 'lucide-react';
+import { API_BASE } from '../../services/api';
 
 interface TopBarProps {
   isLiveBackend: boolean;
@@ -17,12 +18,12 @@ export const TopBar: React.FC<TopBarProps> = ({ isLiveBackend, onOpenTour }) => 
             }`}
           />
           <span className="font-semibold text-warm-text">
-            {isLiveBackend ? 'Backend Connected (Port 4000)' : 'Backend Disconnected (Port 4000 unreachable)'}
+            {isLiveBackend ? 'Backend Connected' : 'Backend Disconnected'}
           </span>
         </div>
         <span className="text-warm-border">|</span>
         <span>
-          Live Snapshot Engine: <strong className="font-mono text-warm-text font-normal">http://localhost:4000</strong>
+          Live Snapshot Engine: <strong className="font-mono text-warm-text font-normal">{API_BASE}</strong>
         </span>
       </div>
 

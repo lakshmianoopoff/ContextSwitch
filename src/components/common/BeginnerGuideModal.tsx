@@ -67,7 +67,7 @@ export const BeginnerGuideModal: React.FC<BeginnerGuideModalProps> = ({
       content: (
         <div className="space-y-3.5 text-xs text-warm-text/90 leading-relaxed">
           <p>
-            ContextSwitch runs locally on your machine (<code className="font-mono text-[11px] bg-warm-bg px-1 py-0.5 rounded hairline-border">localhost:4000</code>) and directly interfaces with your local disk and Git binary.
+            When ContextSwitch runs locally, its backend directly interfaces with your local disk and Git binary. The hosted demo cannot access a visitor's filesystem.
           </p>
           <div className="grid grid-cols-2 gap-2.5">
             <div className="p-2.5 rounded-lg bg-warm-bg border border-warm-border">
