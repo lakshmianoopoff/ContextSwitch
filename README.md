@@ -36,6 +36,49 @@ ContextSwitch solves cognitive reorientation through a 3-layer architecture:
 
 ---
 
+## 🏛️ System Architecture
+
+```mermaid
+graph TD
+    subgraph Client ["Frontend (React 18 + Vite · Port 5173)"]
+        UI_Dash["Dashboard View<br/>(Tracked Repos & Health)"]
+        UI_Brief["Resume Briefing View<br/>(AI Narrative & Next Step)"]
+        UI_Pat["Patterns View<br/>(Cross-Project Bottlenecks)"]
+        API_Client["Typed API Service (src/services/api.ts)"]
+    end
+
+    subgraph Server ["Backend (Node Express + TypeScript · Port 4000)"]
+        Routes["REST Endpoints (/projects, /resume, /patterns)"]
+        GitCap["Git Capture (simple-git)"]
+        TestCap["Test Parser (Jest / Mocha output)"]
+        TodoScan["Source TODO Scanner"]
+        Codex["Codex Reasoning Engine (Structured JSON)"]
+        DB[(SQLite Persistent Store<br/>better-sqlite3)]
+    end
+
+    subgraph Repos ["Target Repositories"]
+        CurrentRepo["ContextSwitch / Active Local Codebase (.)"]
+        CustomRepo["Any Local Repository on Machine (/path/to/repo)"]
+    end
+
+    UI_Dash --> API_Client
+    UI_Brief --> API_Client
+    UI_Pat --> API_Client
+    API_Client <-->|REST JSON| Routes
+
+    Routes --> GitCap
+    Routes --> TestCap
+    Routes --> TodoScan
+    Routes <--> DB
+    Routes <--> Codex
+
+    GitCap --> Repos
+    TestCap --> Repos
+    TodoScan --> Repos
+```
+
+---
+
 ## Features
 
 * **Instant 15-Second Resume Briefing:** Plain-English summary of what was in-flight, which files were touched, and what needs immediate attention.
